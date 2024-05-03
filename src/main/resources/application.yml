@@ -1,0 +1,101 @@
+spring:
+  main.banner-mode: off
+  datasource:
+    url: jdbc:postgresql://localhost:5432/oauth
+    username: oauth
+    password: oauth
+    dbcp2:
+      max-wait-millis: 30000
+      validation-query: select 1
+      validation-query-timeout: 30
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    database: POSTGRESQL
+    show-sql: true
+    hibernate:
+      ddl-auto: validate
+    open-in-view: false
+    properties:
+      hibernate:
+        format_sql: true
+        jdbc:
+          lob:
+            non_contextual_creation: true
+        id:
+          new_generator_mappings: true
+  http:
+    multipart:
+      max-file-size: 100mb
+      max-request-size: 11MB
+  flyway:
+    enabled: true
+    url: jdbc:postgresql://localhost:5432/oauth
+    password: oauth
+    user: oauth
+    locations: [ 'classpath:db/migration' ]
+    loggers: log4j2
+  docker:
+    compose:
+      lifecycle-management: start-only
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: http://localhost:8080
+          jwk-set-uri: http://localhost:8080/.well-known/jwks.json
+  thread-executor: virtual
+  threads:
+    virtual:
+      enabled: true
+
+management:
+  info:
+    env:
+      enabled: true
+  health:
+    probes:
+      enabled: true
+  endpoints:
+    web:
+      exposure:
+        include: info, health, prometheus, metrics
+
+spring-doc:
+  pathsToMatch: /v1/**
+
+
+logging:
+  level:
+    org.springframework.web.filter.CommonsRequestLoggingFilter: DEBUG
+    #    org.hibernate.type: TRACE
+    #    org.springframework.orm.jpa: TRACE
+    #    org.springframework.transaction: DEBUG
+    root: INFO
+
+
+
+jwt:
+  secret: 4937cf3372b4d5f196cc8abe0d6d5c0e97b36fbbf2c47d7e5556fe5ad5ec23c7
+  token:
+    expiration: 86400000
+  refreshToken:
+    expiration: 604800000
+  issuer: "http://localhost:8080"
+  key:
+    public: classpath:app.pub
+    private: classpath:app.key
+    id: bootiful
+
+sendgrid:
+  apiKey: <your api key>
+  forgotPasswordTemplateId: <template-id of the email>
+  userInviteTemplateId: <template-id of the email>
+  sender: <sender-email>
+  senderName: <sender name>
+
+app:
+  file:
+    rootLocation: classpath
+  frontendUrl: http://localhost:8080/set-new-password
+  passkey: 2035208f3adcf6aae2638d11fa9948b9149600e9b05350175b6ecdaa0681ffb2
+  encryptionKey: 2ea6612eb53424f63eac513bb7411ed1e2acbd41f1f97afcab9e76f3b47f0dbdd4004ccb9f6d38d03faf1bc6121a49c7

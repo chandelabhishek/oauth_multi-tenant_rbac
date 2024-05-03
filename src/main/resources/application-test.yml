@@ -1,0 +1,14 @@
+app:
+  file:
+    rootLocation: classpath:/files
+  frontendUrl: http://localhost:8080/set-new-password
+  passkey: f59d6d12b4c8477e50d66bd9dbd19068c96b31b2ae92e83847af8f4ab825da9b
+  encryptionKey: 29d34ddb965f057640adbff5f6afa563b582dd2777eb95101420b523ffe72c7345d66011546a32ecc8f7b82d4def805d
+
+jwt:
+  secret: test_token_test_token_test_token_test_token_test_token
+  token:
+    expiration: 86400000
+  refreshToken:
+    expiration: 604800000
+  issuer: my-oauth.com

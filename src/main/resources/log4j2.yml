@@ -1,0 +1,32 @@
+Configuration:
+  name: Default
+  Properties:
+    Property:
+      name: log-path
+      value: "logs"
+  Appenders:
+    Console:
+      name: Console_Appender
+      target: SYSTEM_OUT
+      JsonTemplateLayout:
+        eventTemplateUri: "classpath:EcsLayout.json"
+  Loggers:
+    AsyncRoot:
+      level: INFO
+      AppenderRef:
+        - ref: Console_Appender
+    AsyncLogger:
+      - name: org.apache
+        level: INFO
+      - name: org.springframework.beans.factory
+        level: INFO
+      - name: org.springframework.orm.jpa.JpaTransactionManager
+        level: TRACE
+      - name: org.flywaydb.core.
+        level: DEBUG
+      - name: com.oauth.example
+        additivity: false
+        level: INFO
+        AppenderRef:
+          - ref: Console_Appender
+            level: INFO

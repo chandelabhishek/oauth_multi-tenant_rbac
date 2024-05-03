@@ -1,0 +1,127 @@
+plugins {
+    id 'java'
+    id 'org.springframework.boot' version '3.2.1'
+    id 'io.spring.dependency-management' version '1.1.4'
+    id 'org.hibernate.orm' version '6.4.0.Final'
+    id 'jacoco'
+    id "org.sonarqube" version "4.3.1.3277"
+    id 'com.adarshr.test-logger' version '4.0.0'
+}
+
+group = 'com.oauth'
+version = '0.0.1-SNAPSHOT'
+
+java {
+    sourceCompatibility = JavaVersion.VERSION_21
+}
+
+bootRun {
+    environment SPRING_PROFILES_ACTIVE: environment.SPRING_PROFILES_ACTIVE ?: 'local'
+}
+
+test {
+    environment(SPRING_PROFILES_ACTIVE: 'test')
+}
+
+bootJar {
+    mainClass = 'com.oauth.example.Application'
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation('org.springframework.boot:spring-boot-starter-web')
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+    implementation('io.hypersistence:hypersistence-utils-hibernate-62:3.5.0')
+    implementation('org.springdoc:springdoc-openapi-starter-webmvc-ui:2.1.0')
+    implementation 'org.flywaydb:flyway-core:9.21.1'
+    implementation 'org.springframework.boot:spring-boot-starter-validation'
+    implementation 'org.hibernate:hibernate-validator:8.0.1.Final'
+    implementation 'org.springframework.boot:spring-boot-starter-log4j2'
+    implementation 'com.lmax:disruptor:3.4.4'
+    implementation 'org.springframework.boot:spring-boot-starter-security'
+    implementation 'org.modelmapper:modelmapper:3.1.1'
+    implementation 'io.jsonwebtoken:jjwt-api:0.11.1'
+    implementation 'com.google.api:api-common:2.19.0'
+    implementation 'com.sendgrid:sendgrid-java'
+    implementation 'io.netty:netty-resolver-dns-native-macos:4.1.97.Final:osx-aarch_64'
+    implementation 'com.googlecode.libphonenumber:libphonenumber:8.13.20'
+    implementation 'org.mapstruct:mapstruct:1.5.5.Final'
+//    ------------- OAuth 2 -----------------------------
+    implementation 'org.springframework.boot:spring-boot-starter-oauth2-resource-server'
+    implementation 'org.springframework.boot:spring-boot-starter-oauth2-authorization-server'
+    implementation 'org.springframework.boot:spring-boot-starter-security'
+    implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
+
+    implementation 'io.jsonwebtoken:jjwt-api:0.12.3'
+
+    runtimeOnly('org.postgresql:postgresql')
+    runtimeOnly 'org.apache.logging.log4j:log4j-layout-template-json:2.20.0'
+    runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.12.3'
+    runtimeOnly 'io.jsonwebtoken:jjwt-jackson:0.12.3'
+
+
+    compileOnly 'org.projectlombok:lombok:1.18.30'
+    annotationProcessor('org.projectlombok:lombok:1.18.30')
+    annotationProcessor 'org.mapstruct:mapstruct-processor:1.5.5.Final'
+    testCompileOnly('org.projectlombok:lombok:1.18.30')
+    testAnnotationProcessor('org.projectlombok:lombok')
+
+    developmentOnly('org.springframework.boot:spring-boot-devtools')
+    developmentOnly('org.springframework.boot:spring-boot-docker-compose')
+
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testImplementation 'org.springframework.security:spring-security-test'
+    testImplementation('org.junit.jupiter:junit-jupiter:5.10.0')
+    testImplementation 'org.hamcrest:hamcrest'
+    testImplementation 'com.h2database:h2'
+
+    // observability
+    implementation 'org.springframework.boot:spring-boot-starter-actuator'
+    implementation 'io.micrometer:micrometer-registry-prometheus'
+}
+
+configurations {
+    configureEach {
+        exclude group: 'org.springframework.boot', module: 'spring-boot-starter-logging'
+    }
+}
+
+test {
+    useJUnitPlatform()
+}
+
+jacocoTestReport {
+    dependsOn test // tests are required to run before generating the report
+    reports {
+        xml.required = true
+        xml.outputLocation = file("build/reports/jacoco.xml")
+    }
+    classDirectories.setFrom(files(classDirectories.files.collect {
+        fileTree(dir: it, exclude: [
+                "com/oauth/example/domain/entity",
+                "com/oauth/example/domain/dto",
+                "com/oauth/example/domain/enums",
+                "com/oauth/example/domain/mapper/*",
+                "com/oauth/example/domain/model",
+                "com/oauth/example/domain/annotations",
+                "com/oauth/example/domain/exception",
+                "com/oauth/example/config",
+                "com/oauth/example/repository",
+                "com/oauth/example/Application.class",
+        ])
+    }))
+}
+
+sonar {
+    properties {
+        property "sonar.projectKey", "myProjectKey"
+        property "sonar.organization", "myOrganization"
+        property "sonar.token", "sqa_92f804f5472b951668f2b692bb72a3fd26c1e915"
+        property "sonar.host.url", "http://localhost:9000"
+        property "sonar.exclusions", "**/domain/**/*,**/config/**/*,**/repository/**/*,**/Application.java"
+    }
+}
+

@@ -1,0 +1,42 @@
+db_credentials: &db_credentials
+  url: jdbc:postgresql://${db-server}:5432/${db-name}
+  username: ${db-username}
+  password: ${db-password}
+
+spring:
+  main.banner-mode: off
+  datasource:
+    <<: *db_credentials
+    dbcp2:
+      max-wait-millis: 30000
+      validation-query: select 1
+      validation-query-timeout: 30
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    database: POSTGRESQL
+    show-sql: true
+    hibernate:
+      ddl-auto: validate
+    open-in-view: false
+    properties:
+      hibernate:
+        format_sql: true
+        jdbc:
+          lob:
+            non_contextual_creation: true
+        id:
+          new_generator_mappings: true
+  http:
+    multipart:
+      max-file-size: 100mb
+      max-request-size: 11MB
+  flyway:
+    enabled: true
+    <<: *db_credentials
+    user: ${db-username}
+    password: ${db-password}
+    locations: [ 'classpath:db/migration' ]
+    loggers: log4j2
+  docker:
+    compose:
+      lifecycle-management: start-only

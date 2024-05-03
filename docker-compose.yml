@@ -1,0 +1,9 @@
+services:
+  postgres:
+    image: postgres:15.3
+    environment:
+      - POSTGRES_DB=oauth
+      - POSTGRES_USER=oauth
+      - POSTGRES_PASSWORD=oauth
+    ports:
+      - 5432:5432
